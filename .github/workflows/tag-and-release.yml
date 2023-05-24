@@ -10,7 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: read-all|write-all
+    permissions:
+      contents: read|write
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v3
