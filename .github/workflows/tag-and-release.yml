@@ -31,8 +31,14 @@ jobs:
         run: 
           sbt stage
       - name: Zip
-        run:
-          echo "New tag is ${{ steps.tag.outputs.new_tag }}"
-          echo "Previous tag is ${{ steps.tag.outputs.previous_tag }}"
-          echo "Changelog is ${{ steps.tag.outputs.changelog }}"
-           
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: "release-'${{steps.tag.outputs.new_tag}}'.zip"
+          exclusions: '*.git* /.github/* '
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release.zip"
+          tag: "'${{steps.tag.outputs.new_tag}}'"
+          generateReleaseNotes: true 
