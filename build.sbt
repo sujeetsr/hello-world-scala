@@ -1,5 +1,7 @@
 val scala3Version = "3.2.2"
 
+lazy val startupTransition: State => State = "conventionalCommits" :: _
+
 lazy val root = project
   .in(file("."))
   .settings(
@@ -8,7 +10,11 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
+    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
+    Global / onLoad := {
+      val old = (Global / onLoad).value
+      startupTransition compose old
+    }
   )
 
 enablePlugins(JavaAppPackaging)
