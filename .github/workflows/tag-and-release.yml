@@ -34,11 +34,11 @@ jobs:
         uses: TheDoctor0/zip-release@0.7.1
         with:
           type: 'zip'
-          filename: "release-'${{steps.tag.outputs.new_tag}}'.zip"
+          filename: "release-${{steps.tag.outputs.new_tag}}.zip"
           exclusions: '*.git* /.github/* '
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "release.zip"
-          tag: "'${{steps.tag.outputs.new_tag}}'"
+          artifacts: "release-${{steps.tag.outputs.new_tag}}.zip"
+          tag: "${{steps.tag.outputs.new_tag}}"
           generateReleaseNotes: true 
