@@ -81,7 +81,7 @@ jobs:
       - id: previous_tag
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
         run: |
-          git fetch --tags
+          git fetch --prune --unshallow --tags
           echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1` >> $GITHUB_OUTPUT
           echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1`
           git tag --list "v*" --sort=-version:refname --merged

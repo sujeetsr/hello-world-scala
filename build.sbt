@@ -39,7 +39,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Run(
       id = Option("previous_tag"),
       commands = List(
-        "git fetch --tags",
+        "git fetch --prune --unshallow --tags",
         "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -n 2 | tail -n 1` >> $GITHUB_OUTPUT",
         "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -n 2 | tail -n 1`",
         "git tag --list \"v*\" --sort=-version:refname --merged"
