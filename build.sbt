@@ -36,20 +36,28 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
       ),
       cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
-    WorkflowStep.Use(
-      UseRef.Public("WyriHaximus", "github-action-get-previous-tag", "v1"),
-      params = Map(
-        "fallback" -> "0.0.0",
-        "prefix" -> "v"
+    WorkflowStep.Run(
+      id = Option("previous_tag"),
+      commands = List(
+        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -2 | tail -1` >> $GITHUB_OUTPUT",
+        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -2 | tail -1`"
       ),
-      id = Option("get_previous_tag"),
       cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
+    // WorkflowStep.Use(
+    //   UseRef.Public("WyriHaximus", "github-action-get-previous-tag", "v1"),
+    //   params = Map(
+    //     "fallback" -> "0.0.0",
+    //     "prefix" -> "v"
+    //   ),
+    //   id = Option("get_previous_tag"),
+    //   cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
+    // ),
     WorkflowStep.Use(
       UseRef.Public("madhead", "semver-utils", "latest"),
       params = Map(
         "version" -> "${{steps.tagname.outputs.release_tag}}",
-        "compare-to" -> "${{steps.get_previous_tag.outputs.tag}}"
+        "compare-to" -> "${{steps.previous_tag.outputs.tag}}"
       ),
       id = Option("validate_tag"),
       cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
