@@ -76,6 +76,19 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
         "steps.validate_tag.outputs.comparison-result == '>'"
       )
     ),
+    WorkflowStep.Use(
+      UseRef.Public("ncipollo", "release-action", "v1"),
+      params = Map(
+        "artifacts" -> "release-${{steps.release_tag.outputs.release_tag}}",
+        "tag" ->  "${{steps.release_tag.outputs.release_tag}}",
+        "generateReleaseNotes" -> "${{true}}"
+      ),
+      cond = Option(
+        "github.event_name == 'push' && " +
+        "contains(github.ref, 'refs/tags') && " +
+        "steps.validate_tag.outputs.comparison-result == '>'"
+      )
+    )
   ),
   needs = List("build"),
   scalas = List(scala3Version),
