@@ -19,3 +19,7 @@ lazy val root = project
 
 enablePlugins(JavaAppPackaging)
 
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+ThisBuild / githubWorkflowArtifactUpload := false
+
