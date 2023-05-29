@@ -30,7 +30,10 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Sbt(List("Universal/stage")),
     WorkflowStep.Run(
       id = Option("tagname"),
-      commands = List("echo \"RELEASE_VERSION=${GITHUB_REF#refs/*/}\" >> $GITHUB_ENV"),
+      commands = List(
+        "echo \"RELEASE_VERSION=${GITHUB_REF#refs/*/}\" >> $GITHUB_ENV",
+        "echo \"RELEASE_VERSION=${GITHUB_REF#refs/*/}\""
+      ),
       cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
     WorkflowStep.Use(
