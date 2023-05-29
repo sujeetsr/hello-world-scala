@@ -75,11 +75,23 @@ jobs:
       - id: tagname
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
         run: |
-          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}"
+          echo "release_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+          echo "release_tag=${GITHUB_REF#refs/*/}"
 
-      - if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+      - id: get_previous_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: 1.0.0
+          prefix: v
+
+      - id: validate_tag
+        uses: madhead/semver-utils@latest
+        with:
+          version: ${{steps.tagname.outputs.release_tag}}
+          compare-to: ${{steps.get_previous_tag.outputs.tag}}
+
+      - if: steps.validate_tag.outputs.comparison-result == '>'
         uses: TheDoctor0/zip-release@0.7.1
         with:
           type: zip
-          filename: release-${{steps.tagname.outputs.tag}}
+          filename: release-${{steps.tagname.outputs.release_tag}}
