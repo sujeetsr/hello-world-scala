@@ -19,3 +19,34 @@ lazy val root = project
 
 enablePlugins(JavaAppPackaging)
 
+ThisBuild / scalaVersion                                   := scala3Version
+ThisBuild / crossScalaVersions                             := Seq(scala3Version)
+
+ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
+  "release",
+  "Release",
+  List(
+    WorkflowStep.Checkout,
+    WorkflowStep.Sbt(List("Universal/stage")),
+    WorkflowStep.Run(
+      id = Option("tagname"),
+      commands = List("echo \"RELEASE_VERSION=${GITHUB_REF#refs/*/}\" >> $GITHUB_ENV"),
+      cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
+    ),
+    WorkflowStep.Use(
+      UseRef.Public("TheDoctor0", "zip-release", "0.7.1"),
+      cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
+      params = Map(
+        "type" -> "zip",
+        "filename" -> "release-${{steps.tagname.outputs.tag}}"
+      )
+    ),
+  ),
+  needs = List("build"),
+  scalas = List(scala3Version),
+))
+
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+ThisBuild / githubWorkflowArtifactUpload := false
+
