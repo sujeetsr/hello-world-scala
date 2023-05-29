@@ -39,10 +39,11 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Use(
       UseRef.Public("WyriHaximus", "github-action-get-previous-tag", "v1"),
       params = Map(
-        "fallback" -> "1.0.0",
+        "fallback" -> "0.0.0",
         "prefix" -> "v"
       ),
-      id = Option("get_previous_tag")
+      id = Option("get_previous_tag"),
+      cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
     WorkflowStep.Use(
       UseRef.Public("madhead", "semver-utils", "latest"),
@@ -50,7 +51,8 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
         "version" -> "${{steps.tagname.outputs.release_tag}}",
         "compare-to" -> "${{steps.get_previous_tag.outputs.tag}}"
       ),
-      id = Option("validate_tag")
+      id = Option("validate_tag"),
+      cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
     WorkflowStep.Use(
       UseRef.Public("TheDoctor0", "zip-release", "0.7.1"),
@@ -58,7 +60,11 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
         "type" -> "zip",
         "filename" -> "release-${{steps.tagname.outputs.release_tag}}",
       ),
-      cond = Option("steps.validate_tag.outputs.comparison-result == '>'")
+      cond = Option(
+        "github.event_name == 'push' && " +
+        "contains(github.ref, 'refs/tags') && " +
+        "steps.validate_tag.outputs.comparison-result == '>'"
+      )
     ),
   ),
   needs = List("build"),
