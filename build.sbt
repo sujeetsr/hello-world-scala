@@ -19,6 +19,8 @@ lazy val root = project
 
 enablePlugins(JavaAppPackaging)
 
+ThisBuild / scalaVersion                                   := scala3Version
+ThisBuild / crossScalaVersions                             := Seq(scala3Version)
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowArtifactUpload := false
