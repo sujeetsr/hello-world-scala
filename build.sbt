@@ -27,9 +27,6 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
   "Release",
   List(
     WorkflowStep.Checkout,
-    WorkflowStep.Use(
-      UseRef.Public("actions", "setup-java", "v3")
-    ),
     WorkflowStep.Sbt(List("Universal/stage")),
     WorkflowStep.Run(
       id = Option("tagname"),
@@ -45,6 +42,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
       )
     ),
   ),
+  needs = List("build"),
   scalas = List(scala3Version),
 ))
 
