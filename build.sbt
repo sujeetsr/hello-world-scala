@@ -29,7 +29,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Checkout,
     WorkflowStep.Sbt(List("Universal/stage")),
     WorkflowStep.Run(
-      id = Option("tagname"),
+      id = Option("release_tag"),
       commands = List(
         "echo \"release_tag=${GITHUB_REF#refs/*/}\" >> $GITHUB_OUTPUT",
         "echo \"release_tag=${GITHUB_REF#refs/*/}\""
@@ -39,8 +39,9 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Run(
       id = Option("previous_tag"),
       commands = List(
-        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -2 | tail -1` >> $GITHUB_OUTPUT",
-        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -2 | tail -1`"
+        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -n 2 | tail -n 1` >> $GITHUB_OUTPUT",
+        "echo tag=`git tag --list \"v*\" --sort=-version:refname --merged | head -n 2 | tail -n 1`",
+        "git tag --list \"v*\" --sort=-version:refname --merged"
       ),
       cond = Option("github.event_name == 'push' && contains(github.ref, 'refs/tags')"),
     ),
@@ -56,7 +57,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
     WorkflowStep.Use(
       UseRef.Public("madhead", "semver-utils", "latest"),
       params = Map(
-        "version" -> "${{steps.tagname.outputs.release_tag}}",
+        "version" -> "${{steps.release_tag.outputs.release_tag}}",
         "compare-to" -> "${{steps.previous_tag.outputs.tag}}"
       ),
       id = Option("validate_tag"),
@@ -66,7 +67,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
       UseRef.Public("TheDoctor0", "zip-release", "0.7.1"),
       params = Map(
         "type" -> "zip",
-        "filename" -> "release-${{steps.tagname.outputs.release_tag}}",
+        "filename" -> "release-${{steps.release_tag.outputs.release_tag}}",
       ),
       cond = Option(
         "github.event_name == 'push' && " +

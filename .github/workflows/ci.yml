@@ -72,7 +72,7 @@ jobs:
 
       - run: sbt ++${{ matrix.scala }} Universal/stage
 
-      - id: tagname
+      - id: release_tag
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
         run: |
           echo "release_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
@@ -81,18 +81,19 @@ jobs:
       - id: previous_tag
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
         run: |
-          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -2 | tail -1` >> $GITHUB_OUTPUT
-          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -2 | tail -1`
+          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1` >> $GITHUB_OUTPUT
+          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1`
+          git tag --list "v*" --sort=-version:refname --merged
 
       - id: validate_tag
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
         uses: madhead/semver-utils@latest
         with:
-          version: ${{steps.tagname.outputs.release_tag}}
+          version: ${{steps.release_tag.outputs.release_tag}}
           compare-to: ${{steps.previous_tag.outputs.tag}}
 
       - if: github.event_name == 'push' && contains(github.ref, 'refs/tags') && steps.validate_tag.outputs.comparison-result == '>'
         uses: TheDoctor0/zip-release@0.7.1
         with:
           type: zip
-          filename: release-${{steps.tagname.outputs.release_tag}}
+          filename: release-${{steps.release_tag.outputs.release_tag}}
