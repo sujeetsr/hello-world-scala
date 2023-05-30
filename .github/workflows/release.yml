@@ -56,6 +56,6 @@ jobs:
       - if: steps.validate_tag.outputs.comparison-result == '>'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: release-${{steps.release_tag.outputs.release_tag}}
+          artifacts: release-${{steps.release_tag.outputs.release_tag}}.zip
           tag: ${{steps.release_tag.outputs.release_tag}}
           generateReleaseNotes: ${{true}}
