@@ -1,3 +1,4 @@
+val scala2Version = "2.13.10"
 val scala3Version = "3.2.2"
 
 lazy val startupTransition: State => State = "conventionalCommits" :: _
@@ -19,8 +20,8 @@ lazy val root = project
 
 enablePlugins(JavaAppPackaging)
 
-ThisBuild / scalaVersion                                   := scala3Version
-ThisBuild / crossScalaVersions                             := Seq(scala3Version)
+ThisBuild / scalaVersion                                   := scala2Version
+ThisBuild / crossScalaVersions                             := Seq(scala2Version)
 
 // ThisBuild / githubWorkflowAddedJobs ++= Seq(WorkflowJob(
 //   "release",
