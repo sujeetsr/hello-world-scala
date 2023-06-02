@@ -40,6 +40,7 @@ jobs:
         with:
           type: zip
           filename: release-${{steps.create_release.outputs.tag_name}}.zip
+          directory: './target/universal/stage'
           exclusions: '*.git*, .metals'
 
       - name: Release Upload Assets
