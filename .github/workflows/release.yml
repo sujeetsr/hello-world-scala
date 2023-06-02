@@ -16,7 +16,6 @@ jobs:
         os: [ubuntu-latest]
         scala: [3.2.2]
         java: [temurin@11]
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
