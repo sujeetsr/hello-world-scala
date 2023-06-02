@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          config-name: release-config.yml
+          config-name: release-drafter.yml
               
       - name: Create Zip
         #if: steps.validate_tag.outputs.comparison-result == '>'
