@@ -50,5 +50,5 @@ jobs:
           append_body: true
           tag_name: ${{steps.create_release.outputs.tag_name}}
           files: |
-            release-${{steps.create_release.outputs.tag_name}}.zip
+            target/universal/stage/release-${{steps.create_release.outputs.tag_name}}.zip
 
