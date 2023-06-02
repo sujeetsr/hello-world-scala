@@ -39,14 +39,13 @@ jobs:
         uses: TheDoctor0/zip-release@0.7.1
         with:
           type: zip
-          filename: release-${{steps.release_tag.outputs.release_tag}}.zip
+          filename: release-${{steps.create_release.outputs.tag_name}}.zip
           exclusions: '*.git*, .metals'
 
       - name: Release Upload Assets
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           draft: true
           files: |
-            release-${{steps.release_tag.outputs.release_tag}}.zip
+            release-${{steps.create_release.outputs.tag_name}}.zip
 
