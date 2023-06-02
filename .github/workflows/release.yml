@@ -26,25 +26,6 @@ jobs:
       - id: build_stage
         run: sbt ++${{ matrix.scala }} Universal/stage
 
-      - id: release_tag
-        run: |
-          echo "release_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-          echo "release_tag=${GITHUB_REF#refs/*/}"
-
-      - id: previous_tag
-        run: |
-          git fetch --prune --unshallow --tags
-          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1` >> $GITHUB_OUTPUT
-          echo tag=`git tag --list "v*" --sort=-version:refname --merged | head -n 2 | tail -n 1`
-          git tag --list "v*" --sort=-version:refname --merged
-
-      - id: validate_tag
-        uses: madhead/semver-utils@latest
-        with:
-          version: ${{steps.release_tag.outputs.release_tag}}
-          compare-to: ${{steps.previous_tag.outputs.tag}}
-          lenient: false
-
       - name: Create Release Draft
         id: create_release
         uses: release-drafter/release-drafter@v5
