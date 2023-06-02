@@ -85,7 +85,7 @@ ThisBuild / crossScalaVersions                             := Seq(scala3Version)
 //   needs = List("build"),
 //   scalas = List(scala3Version),
 // ))
-
+ThisBuild / githubWorkflowTargetBranches := Seq("main")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowArtifactUpload := false
